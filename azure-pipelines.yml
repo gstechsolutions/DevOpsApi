@@ -31,6 +31,12 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+- task: VSTest@2
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+
 # Step 3: Publish the project output
 - task: DotNetCoreCLI@2
   displayName: 'Publish DevOpsApi.core.api'
@@ -56,7 +62,3 @@ steps:
     artifactName: 'DevOpsApi.core.api'
     publishLocation: 'Container'
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
