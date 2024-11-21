@@ -1,11 +1,13 @@
 ﻿using DevOpsApi.core.api.Models;
 using DevOpsApi.core.api.Models.POSTempus;
 using DevOpsApi.core.api.Services.POSTempus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace DevOpsApi.core.api.Controllers
 {
+    
     [ApiController]
     public class TempusController : ControllerBase
     {
@@ -38,6 +40,7 @@ namespace DevOpsApi.core.api.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpGet]
         [Route("api/tempus/location/list")]
         [SwaggerOperation(OperationId = "GetLocations")]
@@ -127,5 +130,17 @@ namespace DevOpsApi.core.api.Controllers
             var response = await service.GetLoginDetailsByUser(filter);
             return Ok(response);
         }
+
+        //https://jsonplaceholder.typicode.com/posts
+        [Authorize(Roles = "dispatcher")]
+        [HttpGet]
+        [Route("api/tempus/posts/list")]
+        [SwaggerOperation(OperationId = "GetPosts")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<LocationModel>), description: "Used to retrieve list of locations.")]
+        public async Task<IActionResult> GetPosts()
+        {
+            var list = await service.GetPosts();
+            return Ok(list);
+        }               
     }
 }

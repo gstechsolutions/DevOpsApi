@@ -14,6 +14,9 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Xml;
 using Microsoft.EntityFrameworkCore;
+using DevOpsApi.core.api.Models.JsonPlaceHolder;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace DevOpsApi.core.api.Services.POSTempus
 {
@@ -812,6 +815,41 @@ namespace DevOpsApi.core.api.Services.POSTempus
             }
 
             return loginDetails;
+        }
+
+        public async Task<List<PostModel>> GetPosts()
+        {
+            var functionName = "GetPosts";
+            var list = new List<PostModel>();
+
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.GetAsync("https://jsonplaceholder.typicode.com/posts");
+
+                    if (response != null && response.IsSuccessStatusCode)
+                    {
+                        var respString = await response.Content.ReadAsStringAsync();
+
+                        list = JsonConvert.DeserializeObject<List<PostModel>>(respString);
+                    }                    
+                    else
+                    {
+                        this.logger.LogError($"{functionName} ERROR - {clock.GetCurrentInstant().ToDateTimeUtc().ToLocalTime()}: {response?.StatusCode}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.logger.LogError($"{functionName} EXCEPTION- {clock.GetCurrentInstant().ToDateTimeUtc().ToLocalTime()}: {ex.Message}");
+                }
+                finally
+                {
+                    this.logger.LogInformation($"{clock.GetCurrentInstant().ToDateTimeUtc().ToLocalTime()}: Exited {functionName}.");
+                }
+            }
+
+            return list;
         }
     }
 

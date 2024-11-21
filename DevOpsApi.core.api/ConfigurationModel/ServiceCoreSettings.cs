@@ -14,6 +14,8 @@
 
         public string SignatureFolder { get; set; }
 
-        public string TempusUri { get; set; } 
+        public string TempusUri { get; set; }
+
+        public int TokenValidityMins { get; set; }
     }
 }

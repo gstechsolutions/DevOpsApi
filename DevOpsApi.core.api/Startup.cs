@@ -1,8 +1,12 @@
 ﻿using DevOpsApi.core.api.ConfigurationModel;
 using DevOpsApi.core.api.Data;
+using DevOpsApi.core.api.Services.Auth;
 using DevOpsApi.core.api.Services.POSTempus;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NodaTime;
+using System.Text;
 
 namespace DevOpsApi.core.api
 {
@@ -32,6 +36,7 @@ namespace DevOpsApi.core.api
 
             //DI Services           
             services.AddScoped<ITempusService, TempusService>();
+            services.AddScoped<IJwtService, JwtService>();
 
 
             services.AddCors(options =>
@@ -44,23 +49,67 @@ namespace DevOpsApi.core.api
 
             services.AddControllers();
             services.AddMvc(option => option.EnableEndpointRouting = false);
-            //.AddXmlSerializerFormatters()
-            //.AddNewtonsoftJson(options =>
-            //{
-            //    options.SerializerSettings.Converters.Add(new StringEnumConverter());
-            //    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            //    options.SerializerSettings.Formatting = Formatting.Indented;
-            //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            //});
+
 
             var appSettingsSection = Configuration.GetSection("ServiceCore");
             var appSettings = appSettingsSection.Get<ServiceCoreSettings>();
 
+
+            // Load JWT settings from configuration
+            var jwtSettings = Configuration.GetSection("JwtConfig");
+            var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+                };
+            });
+
+            services.AddAuthorization();
+
+            // Add Swagger with JWT support
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Accounting Core", Version = "v1" });
                 c.EnableAnnotations();
+                c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                    Description = "Enter 'Bearer' [space] and then your token"
+                });
+                c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+                {
+                    {
+                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                        {
+                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                            {
+                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
+
 
             services.AddLogging();
 
@@ -70,11 +119,21 @@ namespace DevOpsApi.core.api
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, STRDMSContext context)
         {
             app.UseCors("CorsPolicy");
+            app.UseHttpsRedirection();
+
+            // Configure the middleware order for JWT and routing
+            app.UseRouting();
 
             // Uncomment the below line to enable authentication
             app.UseAuthentication();
+            app.UseAuthorization();
 
-
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Accounting Core V1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseMvc();
 
@@ -82,8 +141,7 @@ namespace DevOpsApi.core.api
             //Uncommment for EF data migrations. Need to inject context to this method first.
             //context.Database.Migrate();
 
-            app.UseRouting();
-            app.UseAuthorization();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

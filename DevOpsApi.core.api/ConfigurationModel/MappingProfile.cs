@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DevOpsApi.core.api.Data.Entities;
 using DevOpsApi.core.api.Models;
+using DevOpsApi.core.api.Models.Auth;
 using DevOpsApi.core.api.Models.POSTempus;
 
 namespace DevOpsApi.core.api.ConfigurationModel
@@ -36,6 +37,18 @@ namespace DevOpsApi.core.api.ConfigurationModel
                 ;
 
             this.CreateMap<POSLoginDetail, POSLoginDetailsModel>()
+                ;
+
+            this.CreateMap<RolePolicy, RolePolicyModel>()
+                ;
+
+            this.CreateMap<Role, RoleModel>()
+                ;
+
+            this.CreateMap<Policy, PolicyModel>()
+                ;
+
+            this.CreateMap<User, UserModel>().ReverseMap()
                 ;
         }
     }

@@ -45,5 +45,13 @@ namespace DevOpsApi.core.api.Data
 
         public DbSet<POSLoginDetail> POSLoginDetails { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Role> Roles { get; set; }
+
+        public DbSet<Policy> Policies { get; set; }
+
+        public DbSet<RolePolicy> RolePolicies { get; set; }
+
     }
 }

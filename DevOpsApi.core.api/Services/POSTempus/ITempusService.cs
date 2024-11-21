@@ -1,5 +1,6 @@
 ﻿using DevOpsApi.core.api.Models.POSTempus;
 using DevOpsApi.core.api.Models;
+using DevOpsApi.core.api.Models.JsonPlaceHolder;
 
 namespace DevOpsApi.core.api.Services.POSTempus
 {
@@ -30,5 +31,6 @@ namespace DevOpsApi.core.api.Services.POSTempus
 
         Task<POSLoginDetailsModel> GetLoginDetailsByUser(PosFiltersModel model);
 
+        Task<List<PostModel>> GetPosts();
     }
 }
