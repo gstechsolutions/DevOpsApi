@@ -43,7 +43,8 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    projects: '$(projectPath)'
+    # projects: '$(projectPath)'
+    projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(outputDir)'
 
     # Step 4: Archive the output as a zip package (optional)
