@@ -53,8 +53,8 @@ namespace DevOpsApi.core.api.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(List<RolePolicyModel>), description: "Used to retrieve list of policies by roleId.")]
         public async Task<IActionResult> GetPoliciesByRole(int id)
         {
-            var list = await jwtService.GetPoliciesByRole(id);
-            return Ok(list);
+            //var list = await jwtService.GetPoliciesByRole(id);
+            return Ok("{\"data\":\"hello world\" }");
         }
 
         
