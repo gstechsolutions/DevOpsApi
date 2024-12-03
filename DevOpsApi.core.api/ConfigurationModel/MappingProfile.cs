@@ -50,6 +50,9 @@ namespace DevOpsApi.core.api.ConfigurationModel
 
             this.CreateMap<User, UserModel>().ReverseMap()
                 ;
+
+            this.CreateMap<User, UserModelToInsert>().ReverseMap()
+                ;
         }
     }
 }

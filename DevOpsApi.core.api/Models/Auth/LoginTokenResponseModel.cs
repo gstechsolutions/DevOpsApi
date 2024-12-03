@@ -8,6 +8,8 @@
 
         public int ExpiresIn { get; set; }
 
-        public List<string>? Roles { get; set; }
+        public List<RolePolicyModel>? Roles { get; set; }
+
+        public int RoleId { get; set; }
     }
 }

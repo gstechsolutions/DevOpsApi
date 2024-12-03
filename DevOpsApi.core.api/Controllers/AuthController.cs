@@ -1,4 +1,5 @@
-﻿using DevOpsApi.core.api.Models.Auth;
+﻿using DevOpsApi.core.api.Models;
+using DevOpsApi.core.api.Models.Auth;
 using DevOpsApi.core.api.Models.POSTempus;
 using DevOpsApi.core.api.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
@@ -23,19 +24,25 @@ namespace DevOpsApi.core.api.Controllers
             this.jwtService = jwtService;
         }
 
+        /// <summary>
+        /// return Ok(new { token }); will include token : {} plus all the properties of 
+        /// LoginTokenResponseModel
+        /// </summary>
+        /// <param name="filters"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
         [Route("api/auth/login")]
-        public IActionResult Login([FromBody] LoginModel login)
+        public async Task<IActionResult> Login([FromBody] RequestFilters filters)
         {
             // Perform user validation here (e.g., check user credentials in the database)
 
-            if (!string.IsNullOrEmpty(login.UserName))
+            var userAuth = await jwtService.UserLogin(filters);
+            if (userAuth != null && userAuth.Authenticated)
             {
-                //var token = GenerateJwtToken(login);
-                //var token = jwtService.GenerateJwtToken(login);
-                var token = jwtService.EnsureTokenIsValid(login);
-                return Ok(new { token });
+
+                var token = await jwtService.EnsureTokenIsValid(userAuth);                
+                return Ok(token);
             }
 
             return Unauthorized();
@@ -54,12 +61,20 @@ namespace DevOpsApi.core.api.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("api/auth/user/insert")]
-        public IActionResult InsertNewUserModel([FromBody] UserModel user)
+        public async Task<IActionResult> InsertNewUserModel([FromBody] RequestFilters filters)
         {
-            var result = jwtService.InsertNewUserModel(user);
-            return Ok(result);
+            var result = await jwtService.InsertNewUserModel(filters);
+            return Ok(result);            
+        }
+        //public async Task<UserLoginResponseModel> UserLogin(RequestFilters filters)
 
-            return Unauthorized();
+        [HttpGet]
+        [Route("api/auth/user/delete/{name}")]
+        [SwaggerResponse(statusCode: 200, type: typeof(bool), description: "Used to delete user.")]
+        public async Task<IActionResult> DeleteUser(string name)
+        {
+            var success = await jwtService.DeleteUser(name);
+            return Ok(success);
         }
 
     }
