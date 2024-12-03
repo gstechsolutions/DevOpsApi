@@ -64,4 +64,12 @@ steps:
     artifactName: 'DevOpsApi.core.api'
     publishLocation: 'Container'
 
+    # Step 6: Deploy the package to Azure App Service
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure App Service'
+  inputs:
+    azureSubscription: 'tempusServiceConnection'  # Use the name of your Azure service connection
+    appName: 'jgsaldana4'  # Name of your Azure App Service
+    package: '$(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip'
+
 
