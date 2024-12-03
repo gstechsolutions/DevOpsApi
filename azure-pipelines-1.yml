@@ -1,0 +1,75 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+pool:
+  name: AutoLitasAgentPool
+  demands:
+    - msbuild
+    - Agent.Version -gtVersion 2.163.1
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: VSTest@2
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+
+# Step 3: Publish the project output
+- task: DotNetCoreCLI@2
+  displayName: 'Publish DevOpsApi.core.api'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    # projects: '$(projectPath)'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(outputDir)'
+
+    # Step 4: Archive the output as a zip package (optional)
+- task: ArchiveFiles@2
+  displayName: 'Archive DevOpsApi.core.api as zip'
+  inputs:
+    rootFolderOrFile: '$(outputDir)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip'
+    replaceExistingArchive: true
+
+    # Step 5: Publish the package as an artifact
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'DevOpsApi.core.api'
+    publishLocation: 'Container'
+
+    # Step 6: Deploy the package to Azure App Service
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure App Service'
+  inputs:
+    azureSubscription: 'tempusServiceConnection'  # Use the name of your Azure service connection
+    appName: 'jgsaldana4'  # Name of your Azure App Service
+    package: '$(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip'
+
+
