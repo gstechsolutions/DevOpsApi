@@ -71,5 +71,6 @@ steps:
     azureSubscription: 'tempusServiceConnection'  # Use the name of your Azure service connection
     appName: 'jgsaldana4'  # Name of your Azure App Service
     package: '$(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip'
+    deploymentMethod: 'zipDeploy'
 
 
