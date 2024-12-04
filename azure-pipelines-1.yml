@@ -65,7 +65,7 @@ steps:
     publishLocation: 'Container'
 
 - script: |
-    mkdir $(Build.ArtifactStagingDirectory)/extracted
+    mkdir -p $(Build.ArtifactStagingDirectory)/extracted
     tar -xf $(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip -C $(Build.ArtifactStagingDirectory)/extracted
   displayName: 'Extract Application Files'
 
