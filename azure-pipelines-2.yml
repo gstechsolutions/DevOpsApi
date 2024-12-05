@@ -33,13 +33,13 @@ steps:
 
 
 # Apply Migrations Step
-- script: |
-    echo "Applying database migrations..."
-    dotnet tool restore
-    dotnet ef database update --project src/MyApi/MyApi.csproj
-  displayName: 'Apply Migrations'
-  env:
-    ConnectionStrings__Default: $(ConnectionStrings__Default)
+# - script: |
+#     echo "Applying database migrations..."
+#     dotnet tool restore
+#     dotnet ef database update --project src/MyApi/MyApi.csproj
+#   displayName: 'Apply Migrations'
+#   env:
+#     ConnectionStrings__Default: $(ConnectionStrings__Default)
 
 # Run Integration Tests
 - script: |
