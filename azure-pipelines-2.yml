@@ -1,8 +1,3 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - master
 
@@ -15,12 +10,15 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+# Install NuGet (Ensures you have the latest version)
 - task: NuGetToolInstaller@1
 
+# Restore NuGet Packages
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
 
+# Build the Project
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
@@ -28,7 +26,24 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+# Run Unit Tests
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+# Publish the Output as an Artifact
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(build.artifactStagingDirectory)'
+    artifactName: 'drop'
+    publishLocation: 'Container'
+
+# Deploy to Azure App Service
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure App Service'
+  inputs:
+    azureSubscription: 'tempusServiceConnection'
+    appType: 'webApp'
+    appName: 'jgsaldana4'
+    package: '$(Build.ArtifactStagingDirectory)\WebApp.zip'
