@@ -3,6 +3,7 @@ using DevOpsApi.core.api.Models.Auth;
 using DevOpsApi.core.api.Services.Auth;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ namespace DevOpsApi.core.api.tests.AuthTests
         //to login user John John1234
         //"bw6eo/vK8z8LP8Xxbut8jKPXEJDnPErpwT+yO2KQht3QyZmL6Y0LzOXrCs6t/L0I"
         [Fact]
+        [TestCategory("Integration")]
         public async Task RegisterUserIntegrationTest()
         {
             //arrange
@@ -60,6 +62,7 @@ namespace DevOpsApi.core.api.tests.AuthTests
         }
 
         [Fact]
+        [TestCategory("Integration")]
         public async Task RegisterUserCallingMethodIntegrationTest()
         {
             //arrange
@@ -80,6 +83,7 @@ namespace DevOpsApi.core.api.tests.AuthTests
         }
 
         [Fact]
+        [TestCategory("Integration")]
         public async Task DeleteUserCallingMethodIntegrationTest()
         {
             //arrange
