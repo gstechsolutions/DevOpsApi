@@ -52,11 +52,31 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     
-# Publish the Output as an Artifact
+# Step 3: Publish the project output
+- task: DotNetCoreCLI@2
+  displayName: 'Publish DevOpsApi.core.api'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    # projects: '$(projectPath)'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(outputDir)'
+
+    # Step 4: Archive the output as a zip package (optional)
+- task: ArchiveFiles@2
+  displayName: 'Archive DevOpsApi.core.api as zip'
+  inputs:
+    rootFolderOrFile: '$(outputDir)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip'
+    replaceExistingArchive: true
+
+    # Step 5: Publish the package as an artifact
 - task: PublishBuildArtifacts@1
   inputs:
-    pathToPublish: '$(build.artifactStagingDirectory)'
-    artifactName: 'drop'
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'DevOpsApi.core.api'
     publishLocation: 'Container'
 
 # Deploy to Azure App Service
