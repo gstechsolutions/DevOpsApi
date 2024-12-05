@@ -31,13 +31,14 @@ steps:
 
 
 
-# Apply Database Migrations
-- task: DotNetCoreCLI@2
+# Apply Migrations Step
+- script: |
+    echo "Applying database migrations..."
+    dotnet tool restore
+    dotnet ef database update --project src/MyApi/MyApi.csproj
   displayName: 'Apply Migrations'
-  inputs:
-    command: 'exec'
-    projects: '**/*.csproj'
-    arguments: 'database update'
+  env:
+    ConnectionStrings__Default: $(ConnectionStrings__Default)
 
 # Run Integration Tests
 - script: |
