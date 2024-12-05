@@ -36,7 +36,7 @@ namespace DevOpsApi.core.api.tests.AuthTests
         //to login user John John1234
         //"bw6eo/vK8z8LP8Xxbut8jKPXEJDnPErpwT+yO2KQht3QyZmL6Y0LzOXrCs6t/L0I"
         [Fact]
-        public async Task RegisterUserTest()
+        public async Task RegisterUserIntegrationTest()
         {
             //arrange
             var user = "john";
@@ -60,7 +60,7 @@ namespace DevOpsApi.core.api.tests.AuthTests
         }
 
         [Fact]
-        public async Task RegisterUserCallingMethodTest()
+        public async Task RegisterUserCallingMethodIntegrationTest()
         {
             //arrange
             //if it exists delete it
@@ -80,7 +80,7 @@ namespace DevOpsApi.core.api.tests.AuthTests
         }
 
         [Fact]
-        public async Task DeleteUserCallingMethodTest()
+        public async Task DeleteUserCallingMethodIntegrationTest()
         {
             //arrange
             //if it exists delete it
