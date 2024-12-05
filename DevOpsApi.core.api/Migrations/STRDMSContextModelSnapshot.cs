@@ -38,7 +38,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasKey("EmployeeID");
 
-                    b.ToTable("tblEmployee");
+                    b.ToTable("tblEmployee", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.Location", b =>
@@ -70,7 +70,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasKey("LocationID");
 
-                    b.ToTable("tblLocation");
+                    b.ToTable("tblLocation", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.POSConfiguration", b =>
@@ -96,7 +96,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasKey("POSConfigurationID");
 
-                    b.ToTable("tblPOSConfiguration");
+                    b.ToTable("tblPOSConfiguration", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.POSDeviceConfiguration", b =>
@@ -135,7 +135,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasIndex("POSConfigurationID");
 
-                    b.ToTable("tblPOSDeviceConfiguration");
+                    b.ToTable("tblPOSDeviceConfiguration", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.POSDeviceConfigurationHostName", b =>
@@ -155,7 +155,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasKey("POSDeviceConfigurationID");
 
-                    b.ToTable("POSDeviceConfigurationHostNames");
+                    b.ToTable("POSDeviceConfigurationHostNames", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.POSLoginDetail", b =>
@@ -197,7 +197,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasKey("POSLoginID");
 
-                    b.ToTable("tblPOSLoginDetails");
+                    b.ToTable("tblPOSLoginDetails", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.Policy", b =>
@@ -217,7 +217,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Policy");
+                    b.ToTable("Policy", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.PosInvoice", b =>
@@ -269,7 +269,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasKey("SalesId");
 
-                    b.ToTable("POSInvoices");
+                    b.ToTable("POSInvoices", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.Role", b =>
@@ -289,7 +289,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role");
+                    b.ToTable("Role", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.RolePolicy", b =>
@@ -315,7 +315,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RolePolicies");
+                    b.ToTable("RolePolicies", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.SISPosInvoice", b =>
@@ -383,7 +383,7 @@ namespace DevOpsApi.core.api.Migrations
 
                     b.HasKey("SalesId");
 
-                    b.ToTable("SISPOSInvoices");
+                    b.ToTable("SISPOSInvoices", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.User", b =>
@@ -413,7 +413,7 @@ namespace DevOpsApi.core.api.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("DevOpsApi.core.api.Data.Entities.POSDeviceConfiguration", b =>

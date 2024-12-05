@@ -139,7 +139,7 @@ namespace DevOpsApi.core.api
 
 
             //Uncommment for EF data migrations. Need to inject context to this method first.
-            //context.Database.Migrate();
+            context.Database.Migrate();
 
             
             app.UseEndpoints(endpoints =>

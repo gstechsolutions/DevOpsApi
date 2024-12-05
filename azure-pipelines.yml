@@ -73,12 +73,12 @@ steps:
 #     package: '$(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip'
 #     deploymentMethod: 'zipDeploy'
 
-    - script: |
+- script: |
     mkdir $(Build.ArtifactStagingDirectory)/extracted
     tar -xf $(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip -C $(Build.ArtifactStagingDirectory)/extracted
   displayName: 'Extract Application Files'
 
-- task: AzureWebApp@2
+- task: AzureWebApp@1
   displayName: 'Deploy Extracted Application Files'
   inputs:
     azureSubscription: 'tempusServiceConnection'
