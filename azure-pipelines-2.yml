@@ -42,11 +42,15 @@ steps:
 #     ConnectionStrings__Default: $(ConnectionStrings__Default)
 
 # Run Integration Tests
-- script: |
-    echo "Running integration tests"
-    dotnet test --filter TestCategory=Integration
-  env:
-    ConnectionStrings__Default: $(ConnectionStrings__Default)
+# - script: |
+#     echo "Running integration tests"
+#     dotnet test --filter TestCategory=Integration
+#   env:
+#     ConnectionStrings__Default: $(ConnectionStrings__Default)
+- task: VSTest@2
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
     
 # Publish the Output as an Artifact
 - task: PublishBuildArtifacts@1
