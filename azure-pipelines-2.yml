@@ -26,6 +26,10 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+- script: curl https://api.ipify.org
+  displayName: 'Get Agent IP Address'
+
+
 # Run Unit Tests
 - task: VSTest@2
   inputs:
