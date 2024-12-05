@@ -8,6 +8,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  group: DatabaseConfig
 
 steps:
 # Install NuGet (Ensures you have the latest version)
