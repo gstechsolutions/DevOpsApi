@@ -30,12 +30,22 @@ steps:
   displayName: 'Get Agent IP Address'
 
 
-# Run Unit Tests
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
 
+# Apply Database Migrations
+- task: DotNetCoreCLI@2
+  displayName: 'Apply Migrations'
+  inputs:
+    command: 'exec'
+    projects: '**/*.csproj'
+    arguments: 'database update'
+
+# Run Integration Tests
+- script: |
+    echo "Running integration tests"
+    dotnet test --filter TestCategory=Integration
+  env:
+    ConnectionStrings__Default: $(ConnectionStrings__Default)
+    
 # Publish the Output as an Artifact
 - task: PublishBuildArtifacts@1
   inputs:
