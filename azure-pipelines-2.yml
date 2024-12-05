@@ -35,7 +35,7 @@ steps:
 - task: DotNetCoreCLI@2
   displayName: 'Apply Migrations'
   inputs:
-    command: 'run'
+    command: 'exec'
     projects: '**/*.csproj'
     arguments: 'database update'
 
