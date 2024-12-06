@@ -57,7 +57,10 @@ namespace DevOpsApi.core.api
 
             // Load JWT settings from configuration
             var jwtSettings = Configuration.GetSection("JwtConfig");
-            var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+            //var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+            var secretKey = Encoding.UTF8.GetBytes("dJwm7E+6ZxckA8gfH1pIaVnpx8yvrLFO48+zCT+gfCs=");
+
+
 
             services.AddAuthentication(options =>
             {
