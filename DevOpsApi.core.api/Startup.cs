@@ -162,6 +162,18 @@ namespace DevOpsApi.core.api
             //var dbPwd = EncryptDecrypt.Decrypt(Configuration["DBPASSWORD"]);
             var dbPwd = (Configuration["DBPASSWORD"]);
 
+            // Validate values and provide defaults or throw an exception
+            if (string.IsNullOrWhiteSpace(dbConn))
+                throw new ArgumentException("Connection string template (STRDMS) is missing or empty.");
+            if (string.IsNullOrWhiteSpace(dbServer))
+                throw new ArgumentException("DBSERVER is missing or empty.");
+            if (string.IsNullOrWhiteSpace(dbName))
+                throw new ArgumentException("DBNAME is missing or empty.");
+            if (string.IsNullOrWhiteSpace(dbUser))
+                throw new ArgumentException("DBUSER is missing or empty.");
+            if (string.IsNullOrWhiteSpace(dbPwd))
+                throw new ArgumentException("DBPASSWORD is missing or empty.");
+
             return string.Format(dbConn, dbName, dbServer, dbUser, dbPwd);
         }
     }
