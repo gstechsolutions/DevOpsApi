@@ -23,7 +23,8 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    # msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishUrl=$(build.artifactStagingDirectory)/WebApp /p:SkipInvalidConfigurations=true /p:PackageAsSingleFile=false /p:Configuration=$(buildConfiguration)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
@@ -86,4 +87,5 @@ steps:
     azureSubscription: 'tempusServiceConnection'
     appType: 'webApp'
     appName: 'jgsaldana4'
-    package: '$(Build.ArtifactStagingDirectory)\WebApp.zip'
+    # package: '$(Build.ArtifactStagingDirectory)\WebApp.zip'
+    package: '$(build.artifactStagingDirectory)/WebApp'
