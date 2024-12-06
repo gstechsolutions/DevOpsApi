@@ -22,8 +22,9 @@ steps:
 # Build the Project
 - task: VSBuild@1
   inputs:
-    solution: '$(solution)'   
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishUrl=$(build.artifactStagingDirectory)/WebApp /p:SkipInvalidConfigurations=true /p:PackageAsSingleFile=false /p:Configuration=$(buildConfiguration)'
+    solution: '$(solution)'
+    # msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=WebDeploy /p:PublishUrl=$(build.artifactStagingDirectory)/WebApp /p:SkipInvalidConfigurations=true /p:PackageAsSingleFile=false /p:Configuration=$(buildConfiguration)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
@@ -31,6 +32,22 @@ steps:
   displayName: 'Get Agent IP Address'
 
 
+
+# Apply Migrations Step
+# - script: |
+#     echo "Applying database migrations..."
+#     dotnet tool restore
+#     dotnet ef database update --project src/MyApi/MyApi.csproj
+#   displayName: 'Apply Migrations'
+#   env:
+#     ConnectionStrings__Default: $(ConnectionStrings__Default)
+
+# Run Integration Tests
+# - script: |
+#     echo "Running integration tests"
+#     dotnet test --filter TestCategory=Integration
+#   env:
+#     ConnectionStrings__Default: $(ConnectionStrings__Default)
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
@@ -41,9 +58,10 @@ steps:
   displayName: 'Publish DevOpsApi.core.api'
   inputs:
     command: 'publish'
-    publishWebProjects: false    
+    publishWebProjects: false
+    # projects: '$(projectPath)'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(outputDir)'
+    arguments: '--configuration $(buildConfiguration) --self-contained --runtime win-x64 --output $(outputDir)'
 
     # Step 4: Archive the output as a zip package (optional)
 - task: ArchiveFiles@2
@@ -68,5 +86,6 @@ steps:
   inputs:
     azureSubscription: 'tempusServiceConnection'
     appType: 'webApp'
-    appName: 'jgsaldana4'    
-    package: '$(build.artifactStagingDirectory)/WebApp'
+    appName: 'jgsaldana4'
+    package: '$(Build.ArtifactStagingDirectory)/WebApp.zip'
+    # package: '$(build.artifactStagingDirectory)/WebApp'
