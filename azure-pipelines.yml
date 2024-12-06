@@ -1,49 +1,47 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - master
 
 pool:
-  name: AutoLitasAgentPool
-  demands:
-    - msbuild
-    - Agent.Version -gtVersion 2.163.1
+  vmImage: 'windows-latest'
 
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  group: DatabaseConfig
 
 steps:
+# Install NuGet (Ensures you have the latest version)
 - task: NuGetToolInstaller@1
 
+# Restore NuGet Packages
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
 
+# Build the Project
 - task: VSBuild@1
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    solution: '$(solution)'   
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishUrl=$(build.artifactStagingDirectory)/WebApp /p:SkipInvalidConfigurations=true /p:PackageAsSingleFile=false /p:Configuration=$(buildConfiguration)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- script: curl https://api.ipify.org
+  displayName: 'Get Agent IP Address'
+
 
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-
-
+    
 # Step 3: Publish the project output
 - task: DotNetCoreCLI@2
   displayName: 'Publish DevOpsApi.core.api'
   inputs:
     command: 'publish'
-    publishWebProjects: false
-    # projects: '$(projectPath)'
+    publishWebProjects: false    
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(outputDir)'
 
@@ -64,26 +62,11 @@ steps:
     artifactName: 'DevOpsApi.core.api'
     publishLocation: 'Container'
 
-    # Step 6: Deploy the package to Azure App Service
-# - task: AzureWebApp@1
-#   displayName: 'Deploy to Azure App Service'
-#   inputs:
-#     azureSubscription: 'tempusServiceConnection'  # Use the name of your Azure service connection
-#     appName: 'jgsaldana4'  # Name of your Azure App Service
-#     package: '$(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip'
-#     deploymentMethod: 'zipDeploy'
-
-- script: |
-    mkdir $(Build.ArtifactStagingDirectory)/extracted
-    tar -xf $(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip -C $(Build.ArtifactStagingDirectory)/extracted
-  displayName: 'Extract Application Files'
-
+# Deploy to Azure App Service
 - task: AzureWebApp@1
-  displayName: 'Deploy Extracted Application Files'
+  displayName: 'Deploy to Azure App Service'
   inputs:
     azureSubscription: 'tempusServiceConnection'
-    appName: 'jgsaldana4'
-    package: '$(Build.ArtifactStagingDirectory)/extracted'
-
-
-
+    appType: 'webApp'
+    appName: 'jgsaldana4'    
+    package: '$(build.artifactStagingDirectory)/WebApp'
