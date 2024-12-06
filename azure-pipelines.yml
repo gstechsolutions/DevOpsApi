@@ -87,5 +87,5 @@ steps:
     azureSubscription: 'tempusServiceConnection'
     appType: 'webApp'
     appName: 'jgsaldana4'
-    package: '$(Build.ArtifactStagingDirectory)/WebApp.zip'
-    # package: '$(build.artifactStagingDirectory)/WebApp'
+    # package: '$(Build.ArtifactStagingDirectory)/WebApp.zip'
+    package: '$(build.artifactStagingDirectory)/WebApp'
