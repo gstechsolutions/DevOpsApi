@@ -7,10 +7,7 @@ trigger:
 - master
 
 pool:
-  name: AutoLitasAgentPool
-  demands:
-    - msbuild
-    - Agent.Version -gtVersion 2.163.1
+  vmImage: 'windows-latest'
 
 variables:
   solution: '**/*.sln'
@@ -26,54 +23,37 @@ steps:
 
 - task: VSBuild@1
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    solution: '$(solution)'    
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DeployIisAppPath="Default Web Site" /p:Configuration=$(buildConfiguration)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-
-# Step 3: Publish the project output
 - task: DotNetCoreCLI@2
-  displayName: 'Publish DevOpsApi.core.api'
+  displayName: 'Publish Application'
   inputs:
     command: 'publish'
     publishWebProjects: false
-    # projects: '$(projectPath)'
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(outputDir)'
 
-    # Step 4: Archive the output as a zip package (optional)
 - task: ArchiveFiles@2
-  displayName: 'Archive DevOpsApi.core.api as zip'
+  displayName: 'Archive as zip'
   inputs:
     rootFolderOrFile: '$(outputDir)'
-    includeRootFolder: false
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/WebApp.zip'
     replaceExistingArchive: true
 
-    # Step 5: Publish the package as an artifact
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: 'DevOpsApi.core.api'
+    artifactName: 'WebApp'
     publishLocation: 'Container'
 
-- script: |
-    mkdir -p $(Build.ArtifactStagingDirectory)/extracted
-    tar -xf $(Build.ArtifactStagingDirectory)/DevOpsApi.core.api.zip -C $(Build.ArtifactStagingDirectory)/extracted
-  displayName: 'Extract Application Files'
-
 - task: AzureWebApp@1
-  displayName: 'Deploy Extracted Application Files'
+  displayName: 'Deploy to Azure App Service'
   inputs:
     azureSubscription: 'tempusServiceConnection'
+    appType: 'webApp'
     appName: 'jgsaldana4'
-    package: '$(Build.ArtifactStagingDirectory)/extracted'
-
-
+    package: '$(Build.ArtifactStagingDirectory)/WebApp.zip'
