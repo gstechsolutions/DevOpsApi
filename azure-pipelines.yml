@@ -24,30 +24,13 @@ steps:
   inputs:
     solution: '$(solution)'
     # msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=WebDeploy /p:PublishUrl=$(build.artifactStagingDirectory)/WebApp /p:SkipInvalidConfigurations=true /p:PackageAsSingleFile=false /p:Configuration=$(buildConfiguration)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PublishUrl=$(build.artifactStagingDirectory)/WebApp /p:SkipInvalidConfigurations=true /p:PackageAsSingleFile=false /p:Configuration=$(buildConfiguration)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
 - script: curl https://api.ipify.org
   displayName: 'Get Agent IP Address'
 
-
-
-# Apply Migrations Step
-# - script: |
-#     echo "Applying database migrations..."
-#     dotnet tool restore
-#     dotnet ef database update --project src/MyApi/MyApi.csproj
-#   displayName: 'Apply Migrations'
-#   env:
-#     ConnectionStrings__Default: $(ConnectionStrings__Default)
-
-# Run Integration Tests
-# - script: |
-#     echo "Running integration tests"
-#     dotnet test --filter TestCategory=Integration
-#   env:
-#     ConnectionStrings__Default: $(ConnectionStrings__Default)
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
@@ -87,5 +70,5 @@ steps:
     azureSubscription: 'tempusServiceConnection'
     appType: 'webApp'
     appName: 'jgsaldana4'
-    # package: '$(Build.ArtifactStagingDirectory)/WebApp.zip'
-    package: '$(build.artifactStagingDirectory)/WebApp'
+    package: '$(Build.ArtifactStagingDirectory)/WebApp.zip'
+    
